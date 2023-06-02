@@ -1,0 +1,20 @@
+{
+    "name": "smn/forumapi",
+    "description": "Voorbeeld API voor een forum",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Johan Strootman",
+            "email": "johanstr@users.noreply.github.com"
+        }
+    ],
+    "require": {
+      "ext-pdo": "*",
+      "ext-json": "*"
+    }
+}
