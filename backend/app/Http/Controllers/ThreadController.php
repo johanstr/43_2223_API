@@ -2,15 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ThreadModel;
+
 class ThreadController
 {
-   public function index()
+   public function index(): array
    {
-      echo 'ThreadController -> index';
+      return ThreadModel::all();
    }
 
-   public function show()
+   public function show(int $id): array
    {
-      echo 'ThreadController -> show';
+      return ThreadModel::find($id);
+   }
+
+   public function create()
+   {
+
+   }
+
+   public function update()
+   {
+
+   }
+
+   public function destroy()
+   {
+
    }
 }
