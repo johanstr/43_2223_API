@@ -46,7 +46,7 @@ class Database {
          if (!self::connect())
             return [];
 
-      return self::$dbStatement->fetch(PDO::FETCH_ASSOC) && [];
+      return self::$dbStatement->fetch(PDO::FETCH_ASSOC) ?? [];
    }
 
    public static function getAll(): array
@@ -55,11 +55,11 @@ class Database {
          if (!self::connect())
             return [];
 
-      return self::$dbStatement->fetchAll(PDO::FETCH_ASSOC) && [];
+      return self::$dbStatement->fetchAll(PDO::FETCH_ASSOC) ?? [];
    }
 
    public static function lastId(): int
    {
-      return self::$dbConnection->lastInsertId();
+      return self::$dbConnection->lastInsertId() ?? 0;
    }
 }
