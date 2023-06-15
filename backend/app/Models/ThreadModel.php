@@ -6,6 +6,11 @@ use App\Database\Database;
 
 class ThreadModel
 {
+   /**
+    * Get all the threads from the database and return them as an array of records
+    *
+    * @return array           // Array of records
+    */
    public static function all(): array
    {
       Database::query("
@@ -16,9 +21,18 @@ class ThreadModel
          GROUP BY `threads`.`id`
       ");
 
-      return Database::getAll();
+      // Return alle records indien gevuld anders een lege array
+      return Database::getAll() ?? [];
    }
 
+   /**
+    * Get the data of a certain thread based on given ID
+    * Also include all of its topics as a subarray
+    *
+    * @param integer $id         // ID of the thread
+    *
+    * @return array              // Record of the found thread with it's topics
+    */
    public static function find(int $id): array
    {
       // Eerst de bepaalde thread binnenhalen
@@ -44,13 +58,36 @@ class ThreadModel
       ",[ ':id' => $id ]);
 
       $topics = Database::getAll();
+
+      // Invoegen van de array met topics in de main array $thread
       $thread['topics'] = $topics;
 
-      return $thread;
+      // Return $thread indien gevuld anders een lege array
+      return $thread ?? [];
    }
 
-   public static function create()
+   /**
+    * Create a new thread with data given
+    *
+    * @param array $data         // Data for the new thread
+    * 
+    * @return array              // Message and ID of new thread if succesful or empty array
+    */
+   public static function create(array $data): array
    {
+      // Query to insert new thread and execute it
+      Database::query(
+         'INSERT INTO `threads`( `title`, `description`, `user_id`, `created_at`, `updated_at`) VALUES(:title, :description, :user_id, :created_at, :updated_at)',
+         [
+            ':title' => $data['title'],
+            ':description' => $data['description'],
+            ':user_id' => $data['user_id'],
+            ':created_at' => date('Y-m-d H:i:s'),
+            ':updated_at' => date('Y-m-d H:i:s')
+         ]
+      );
 
+      // Return message en ID van de nieuwe thread indien succesvol anders een lege array
+      return ['msg' => 'Thread created.', 'id' => Database::lastId()] ?? [];
    }
 }
