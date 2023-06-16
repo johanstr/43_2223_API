@@ -69,6 +69,17 @@ class ReplyModel
          ]
       );
 
-      return [ 'msg' => 'Reply created successfully', 'id' => Database::lastId() ] ?? [];
+      $lastId = Database::lastId();
+
+      Database::query(
+         'SELECT `replies`.*, `users`.`name` AS `username` 
+         FROM `replies`
+         INNER JOIN `users` ON `users`.`id` = `replies`.`user_id`
+         WHERE `replies`.`id` = :id
+         GROUP BY `replies`.`id`',
+         [':id' => $lastId]
+      );
+
+      return Database::get() ?? [];
    }
 }

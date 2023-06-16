@@ -87,7 +87,20 @@ class ThreadModel
          ]
       );
 
-      // Return message en ID van de nieuwe thread indien succesvol anders een lege array
-      return ['msg' => 'Thread created.', 'id' => Database::lastId()] ?? [];
+      $lastId = Database::lastId();
+
+      Database::query("
+         SELECT `threads`.*, `users`.`name` AS `username`, COUNT(`topics`.`id`) AS `topic_count`
+         FROM `threads`
+         LEFT JOIN `users` ON `users`.`id` = `threads`.`user_id` 
+         LEFT JOIN `topics` ON `topics`.`thread_id` = `threads`.`id`
+         WHERE `threads`.`id` = :id
+         GROUP BY `threads`.`id`
+      ", [':id' => $lastId]);
+
+      $new_thread = Database::get();
+
+      // Return nieuwe record indien succesvol anders een lege array
+      return $new_thread ?? [];
    }
 }
