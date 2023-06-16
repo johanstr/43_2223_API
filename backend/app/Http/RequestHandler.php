@@ -59,7 +59,8 @@ class RequestHandler
       if( $this->request_type !== RequestHandler::OPTIONS ) 
          if( ! $this->checkRequest() ) {
             // Response terug sturen met fout code
-            die('FOUT');
+            ApiResponse::sendResponse([], ApiResponse::HTTP_STATUS_BAD_REQUEST, 'Not allowed request');
+            die();
          }
 
       switch($this->request_type) {
