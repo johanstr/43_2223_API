@@ -22,7 +22,7 @@ class TopicModel
       );
 
       // Return array with threads if successful or empty array
-      return Database::getAll() ?? [];
+      return Database::getAll() ?: [];
    }
 
    /**
@@ -49,21 +49,23 @@ class TopicModel
 
       $topic = Database::get();
 
-      // Last: Get all the replies belonging to the topic
-      Database::query(
-         'SELECT `replies`.*, `users`.`name` AS `username`
-         FROM `replies`
-         LEFT JOIN `users` ON `users`.`id` = `replies`.`user_id`
-         WHERE `replies`.`topic_id` = :id
-         GROUP BY `replies`.`id`',
-         [':id' => $id]
-      );
-
-      // Insert the replies in the $topic array
-      $topic['replies'] = Database::getAll();
+      if( ! empty($topic) ) {
+         // Last: Get all the replies belonging to the topic
+         Database::query(
+            'SELECT `replies`.*, `users`.`name` AS `username`
+            FROM `replies`
+            LEFT JOIN `users` ON `users`.`id` = `replies`.`user_id`
+            WHERE `replies`.`topic_id` = :id
+            GROUP BY `replies`.`id`',
+            [':id' => $id]
+         );
+   
+         // Insert the replies in the $topic array
+         $topic['replies'] = Database::getAll();
+      }
 
       // Return the topic with it's replies if successful or empty array
-      return $topic ?? [];
+      return $topic ?: [];
    }
 
    /**

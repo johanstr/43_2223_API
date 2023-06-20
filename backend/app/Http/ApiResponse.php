@@ -87,4 +87,15 @@ class ApiResponse
       http_response_code($code);
       echo self::prepareResponse($data, $code, $msg);
    }
+
+   public static function sendError(int $code, string $msg, string $error_details = ''): void
+   {
+      self::sendStatusCode($code, $msg);
+      self::sendDefaultHeaders();
+      http_response_code($code);
+      if( ! empty($error_details) )
+         echo self::prepareResponse([
+            'error_details' => $error_details
+         ], $code, $msg);
+   }
 }

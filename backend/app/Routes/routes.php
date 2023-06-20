@@ -3,7 +3,7 @@
 return [
    'GET' => [
       // resource => [Class, 'method']
-      '/' =>           [App\Http\Controllers\ThreadController::class, 'index'],
+      '/' =>          [App\Http\Controllers\ThreadController::class, 'index'],
       'thread' =>     [App\Http\Controllers\ThreadController::class, 'show'],    // Requires ID as parameter in URI
       'threads' =>    [App\Http\Controllers\ThreadController::class, 'index'],
       'topic' =>      [App\Http\Controllers\TopicController::class, 'show'],     // Requires ID as parameter in URI

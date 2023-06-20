@@ -22,7 +22,7 @@ class ThreadModel
       ");
 
       // Return alle records indien gevuld anders een lege array
-      return Database::getAll() ?? [];
+      return Database::getAll() ?: [];
    }
 
    /**
@@ -47,23 +47,25 @@ class ThreadModel
 
       $thread = Database::get();
 
-      // Nu alle bijbehorende topics verzamelen
-      Database::query("
-         SELECT `topics`.*, `users`.`name` AS `username`, COUNT(`replies`.`id`) AS `reply_count`
-         FROM `topics`
-         LEFT JOIN `users` ON `users`.`id` = `topics`.`user_id`
-         LEFT JOIN `replies` ON `replies`.`topic_id` = `topics`.`id`
-         WHERE `topics`.`thread_id` = :id
-         GROUP BY `topics`.`id`
-      ",[ ':id' => $id ]);
+      if( ! empty($thread) ) {
+         // Nu alle bijbehorende topics verzamelen
+         Database::query("
+            SELECT `topics`.*, `users`.`name` AS `username`, COUNT(`replies`.`id`) AS `reply_count`
+            FROM `topics`
+            LEFT JOIN `users` ON `users`.`id` = `topics`.`user_id`
+            LEFT JOIN `replies` ON `replies`.`topic_id` = `topics`.`id`
+            WHERE `topics`.`thread_id` = :id
+            GROUP BY `topics`.`id`
+         ",[ ':id' => $id ]);
 
-      $topics = Database::getAll();
+         $topics = Database::getAll();
 
-      // Invoegen van de array met topics in de main array $thread
-      $thread['topics'] = $topics;
+         // Invoegen van de array met topics in de main array $thread
+         $thread['topics'] = $topics;
+      }
 
       // Return $thread indien gevuld anders een lege array
-      return $thread ?? [];
+      return $thread ?: [];
    }
 
    /**
@@ -88,19 +90,22 @@ class ThreadModel
       );
 
       $lastId = Database::lastId();
+      $new_thread = [];
 
-      Database::query("
-         SELECT `threads`.*, `users`.`name` AS `username`, COUNT(`topics`.`id`) AS `topic_count`
-         FROM `threads`
-         LEFT JOIN `users` ON `users`.`id` = `threads`.`user_id` 
-         LEFT JOIN `topics` ON `topics`.`thread_id` = `threads`.`id`
-         WHERE `threads`.`id` = :id
-         GROUP BY `threads`.`id`
-      ", [':id' => $lastId]);
-
-      $new_thread = Database::get();
+      if($lastId) {
+         Database::query("
+            SELECT `threads`.*, `users`.`name` AS `username`, COUNT(`topics`.`id`) AS `topic_count`
+            FROM `threads`
+            LEFT JOIN `users` ON `users`.`id` = `threads`.`user_id` 
+            LEFT JOIN `topics` ON `topics`.`thread_id` = `threads`.`id`
+            WHERE `threads`.`id` = :id
+            GROUP BY `threads`.`id`
+         ", [':id' => $lastId]);
+   
+         $new_thread = Database::get();
+      }
 
       // Return nieuwe record indien succesvol anders een lege array
-      return $new_thread ?? [];
+      return $new_thread ?: [];
    }
 }

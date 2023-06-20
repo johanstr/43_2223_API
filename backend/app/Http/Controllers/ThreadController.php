@@ -50,7 +50,7 @@ class ThreadController
     *
     * @return array                 // Updated data of the thread
     */
-   public function update(): array
+   public function update(int $id, array $request_data): array
    {
       return [];
    }
@@ -64,7 +64,7 @@ class ThreadController
     * 
     * @return array                 // Message of the result (Error or Success)
     */
-   public function destroy(): array
+   public function destroy(int $id): array
    {
       return [];
    }

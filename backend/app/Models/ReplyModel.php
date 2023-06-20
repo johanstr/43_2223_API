@@ -20,7 +20,7 @@ class ReplyModel
          GROUP BY `replies`.`id`'
       );
 
-      return Database::getAll() ?? [];
+      return Database::getAll() ?: [];
    }
 
    /**
@@ -42,7 +42,7 @@ class ReplyModel
          [':id' => $id]
       );
 
-      return [Database::get()] ?? [];
+      return Database::get() ?: [];
    }
 
    /**
@@ -70,16 +70,21 @@ class ReplyModel
       );
 
       $lastId = Database::lastId();
+      $new_reply = [];
 
-      Database::query(
-         'SELECT `replies`.*, `users`.`name` AS `username` 
-         FROM `replies`
-         INNER JOIN `users` ON `users`.`id` = `replies`.`user_id`
-         WHERE `replies`.`id` = :id
-         GROUP BY `replies`.`id`',
-         [':id' => $lastId]
-      );
+      if($lastId) {
+         Database::query(
+            'SELECT `replies`.*, `users`.`name` AS `username` 
+            FROM `replies`
+            INNER JOIN `users` ON `users`.`id` = `replies`.`user_id`
+            WHERE `replies`.`id` = :id
+            GROUP BY `replies`.`id`',
+            [':id' => $lastId]
+         );
+         
+         $new_reply = Database::get();
+      }
 
-      return Database::get() ?? [];
+      return $new_reply ?: [];
    }
 }
